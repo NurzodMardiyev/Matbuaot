@@ -1,16 +1,26 @@
 import React, { useState, useRef, useEffect } from "react";
-import logo from "../../images/logo.png";
+import { useEmployeeInfo } from "../../hooks/useEmployeeInfo.js";
+import logo from "../../images/pressa logo.png";
 import { Link } from "react-router-dom";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { DarkThemeToggle, Flowbite } from "flowbite-react";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoCloseSharp } from "react-icons/io5";
+// import { useTranslation } from "react-i18next";
 import "../../App.css";
 
 export default function Header() {
   const [selectedLanguage, setSelectedLanguage] = useState("Uz");
   const [show, setShow] = useState(true);
   const menuRef = useRef(null);
+
+  // const { t, i18n } = useTranslation();
+  // useEffect(() => {
+  //   const lng = navigator.language;
+  // i18n.changeLanguage(lng);
+  // }, [i18n]);
+
+  // const lng = navigator.language
 
   const languages = [
     {
@@ -28,8 +38,8 @@ export default function Header() {
   ];
 
   const menu = [
-    { title: "Oliy ta'lim", to: "oliy_talim" },
-    { title: "Personal ta'lim", to: "personal_talim" },
+    { title: "OAVni yoritilishi", to: "oliy_talim" },
+    { title: "Mediatadbirlar", to: "personal_talim" },
     { title: "Qabul", to: "qabul" },
   ];
 
@@ -40,6 +50,7 @@ export default function Header() {
   const handleShowMenu = () => {
     setShow(!show);
   };
+  const { data, error, isLoading, refetch } = useEmployeeInfo();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -47,33 +58,41 @@ export default function Header() {
         setShow(true);
       }
     };
+    refetch();
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [menuRef]);
+  }, [menuRef, refetch]);
+
+  // const { data, error, isLoading } = useEmployeeInfo();
+  // if (isLoading) return <div>Yuklanmoqda...</div>;
+  // if (error) return <div>Xato: {error.message}</div>;
+
+  // if (isLoading) return <div>Yuklanmoqda...</div>;
+  // if (error) return <div>Xato: {error.message}</div>;
 
   return (
-    <div className="shadow-md dark:bg-gray-800 fixed top-0 bg-white w-full">
-      <div className="header-wrapper container md:max-w-6xl  mx-auto flex justify-between py-4 md:px-5 px-5 lg:max-w-7xl lg:mx-auto">
+    <div className=" dark:bg-gray-800 fixed top-0 bg-white w-full">
+      <div className="header-wrapper container md:max-w-10xl  mx-auto flex justify-between py-4 md:px-5  ">
         <div className="logpSection flex gap-6 items-center ">
-          <div className="logo md:max-w-[40px] max-w-[30px] md:h-[40px]">
-            <img className="w-full" src={logo} alt="OTFIV logo" />
+          <div className="logo  md:h-[40px] h-[30px]">
+            <img className="w-full h-full" src={logo} alt="OTFIV logo" />
           </div>
-          <div className="md:flex items-center gap-3 hidden">
+        </div>
+        <div className="loginSection flex items-center">
+          <div className="md:flex items-center gap-3 hidden md:me-8">
             {menu.map((item, index) => (
               <Link
                 key={index}
                 to={item.to}
-                className="font-[500] dark:text-white hover:border-b"
+                className="font-[500] dark:text-white hover:text-[#4CA852]"
               >
                 {item.title}
               </Link>
             ))}
           </div>
-        </div>
-        <div className="loginSection flex items-center">
           <div className="darkMode flex items-center">
             <Flowbite>
               <DarkThemeToggle />
@@ -154,23 +173,7 @@ export default function Header() {
                   </Link>
                 ))}
               </div>
-              <div className="loginOrSignUp flex items-start mt-1 mb-3">
-                <Link
-                  to="/auth"
-                  className="px-3 py-1 rounded-sm text-[12px] bg-blue-500 text-white"
-                >
-                  Kirish
-                </Link>
-              </div>
             </div>
-          </div>
-          <div className="loginOrSignUp md:flex items-center gap-2 hidden">
-            <Link
-              to="/auth"
-              className="px-4 py-1.5 rounded-sm bg-blue-500 text-white"
-            >
-              Kirish
-            </Link>
           </div>
         </div>
       </div>
